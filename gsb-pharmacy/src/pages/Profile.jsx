@@ -1,171 +1,149 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 import '../styles/Profile.css';
 
 const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [user, setUser] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '06 12 34 56 78',
-    address: '123 rue Example, 75000 Paris',
-    birthDate: '1990-01-01',
-    socialSecurity: '1234567890123',
-    profilePicture: 'https://via.placeholder.com/200'
+  const { user, updateProfile } = useAuth();
+  const [formData, setFormData] = useState({
+    name: '',
+    siret: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postal_code: ''
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        siret: user.siret || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        postal_code: user.postal_code || ''
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser(prev => ({
-          ...prev,
-          profilePicture: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      await updateProfile(formData);
+      setSuccess('Profil mis à jour avec succès');
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la mise à jour du profil');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Ici, vous pouvez ajouter la logique pour sauvegarder les modifications
-    setIsEditing(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  if (!user) return null;
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <h2>Mon Profil</h2>
-        <div className="header-actions">
-          {!isEditing && (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
-              Modifier
-            </button>
-          )}
-          <button className="logout-btn" onClick={handleLogout}>
-            Déconnexion
-          </button>
+      <h1>Mon Profil</h1>
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
+      <form onSubmit={handleSubmit} className="profile-form">
+        <div className="form-group">
+          <label htmlFor="name">Nom de la pharmacie</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
         </div>
-      </div>
-
-      <div className="profile-content">
-        <div className="profile-photo">
-          <img src={user.profilePicture} alt="Photo de profil" />
-          {isEditing && (
-            <div className="photo-upload">
-              <label className="upload-btn">
-                Changer la photo
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoChange}
-                  style={{ display: 'none' }}
-                />
-              </label>
-            </div>
-          )}
+        <div className="form-group">
+          <label htmlFor="siret">Numéro SIRET</label>
+          <input
+            type="text"
+            id="siret"
+            name="siret"
+            value={formData.siret}
+            onChange={handleChange}
+            required
+          />
         </div>
-
-        <form className="profile-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Nom complet</label>
-            <input
-              type="text"
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Téléphone</label>
-            <input
-              type="tel"
-              name="phone"
-              value={user.phone}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Adresse</label>
-            <textarea
-              name="address"
-              value={user.address}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Date de naissance</label>
-            <input
-              type="date"
-              name="birthDate"
-              value={user.birthDate}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Numéro de sécurité sociale</label>
-            <input
-              type="text"
-              name="socialSecurity"
-              value={user.socialSecurity}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </div>
-
-          {isEditing && (
-            <div className="form-actions">
-              <button type="submit" className="save-btn">
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                className="cancel-btn"
-                onClick={() => setIsEditing(false)}
-              >
-                Annuler
-              </button>
-            </div>
-          )}
-        </form>
-      </div>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Téléphone</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="address">Adresse</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="city">Ville</label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="postal_code">Code postal</label>
+          <input
+            type="text"
+            id="postal_code"
+            name="postal_code"
+            value={formData.postal_code}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Mise à jour...' : 'Mettre à jour le profil'}
+        </button>
+      </form>
     </div>
   );
 };

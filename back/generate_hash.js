@@ -1,11 +1,16 @@
 const bcrypt = require('bcryptjs');
 
 async function generateHash() {
-  const password = 'test123';
-  const hash = await bcrypt.hash(password, 10);
-  console.log('Nouveau hash pour le mot de passe "test123":');
-  console.log(hash);
-  process.exit(0);
+  const password = 'admin123';
+  const hashedPassword = await bcrypt.hash(password, 10);
+  console.log('Hash généré :', hashedPassword);
+  console.log('\nScript SQL complet :');
+  console.log(`INSERT INTO users (email, password, role) 
+VALUES (
+    'admin@gsb.com',
+    '${hashedPassword}',
+    'admin'
+);`);
 }
 
-generateHash().catch(console.error); 
+generateHash(); 

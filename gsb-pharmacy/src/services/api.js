@@ -20,21 +20,49 @@ const api = {
   },
 
   post: async (endpoint, data) => {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors de la requête');
+    try {
+      console.log('Envoi de la requête à:', `${API_URL}${endpoint}`);
+      console.log('Données envoyées:', data);
+      
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Erreur serveur' }));
+        console.error('Erreur serveur:', errorData);
+        throw new Error(errorData.message || `Erreur ${response.status}: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Erreur lors de la requête:', error);
+      throw error;
     }
-    return response.json();
   },
 
   // Auth
-  login: (credentials) => api.post('/auth/login', credentials),
+  login: async (email, password) => {
+    try {
+      console.log('Tentative de connexion avec:', { email, password });
+      const response = await api.post('/auth/login', { email, password });
+      console.log('Réponse de connexion:', response);
+      return response;
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
+      throw error;
+    }
+  },
   register: (userData) => api.post('/auth/register', userData),
+  logout: () => {
+    // Suppression du token et des données utilisateur du localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Redirection vers la page de connexion
+    window.location.href = '/login';
+  },
 
   // Orders
   getOrders: () => api.get('/orders'),
@@ -54,7 +82,18 @@ const api = {
 
   // User
   getProfile: () => api.get('/users/profile'),
-  updateProfile: (userData) => api.post('/users/profile', userData)
+  updateProfile: (userData) => api.post('/users/profile', userData),
+
+  // Fonctions pour l'administration
+  getUsers: () => api.get('/users'),
+  createUser: (userData) => api.post('/users', userData),
+  updateUser: (userId, userData) => api.put(`/users/${userId}`, userData),
+  deleteUser: (userId) => api.delete(`/users/${userId}`),
+  createMedicament: (medicamentData) => api.post('/medicaments', medicamentData),
+  updateMedicament: (medicamentId, medicamentData) => api.put(`/medicaments/${medicamentId}`, medicamentData),
+  deleteMedicament: (medicamentId) => api.delete(`/medicaments/${medicamentId}`),
+  updateOrderStatus: (orderId, status) => api.put(`/orders/${orderId}/status`, { status }),
+  getStats: () => api.get('/stats')
 };
 
 export default api; 

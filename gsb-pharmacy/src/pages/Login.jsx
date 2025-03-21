@@ -1,73 +1,90 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import '../styles/Login.css';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/Auth.css';
+import logo from '../assets/1 (1).png';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({
+  const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    setLoading(true);
 
     try {
-      await login(credentials);
-      navigate('/profile');
-    } catch (error) {
-      setError(error.message || 'Une erreur est survenue lors de la connexion');
+      await login(formData.email, formData.password);
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la connexion');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Connexion</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="logo-container">
+          <img src={logo} alt="GSB Pharmacy Logo" className="auth-logo" />
+          <p>Accédez à votre espace</p>
+        </div>
+
         {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSubmit}>
+        
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Email</label>
             <input
               type="email"
+              id="email"
               name="email"
-              value={credentials.email}
+              value={formData.email}
               onChange={handleChange}
+              placeholder="Email"
               required
-              disabled={isLoading}
             />
           </div>
+
           <div className="form-group">
-            <label>Mot de passe</label>
             <input
               type="password"
+              id="password"
               name="password"
-              value={credentials.password}
+              value={formData.password}
               onChange={handleChange}
+              placeholder="Mot de passe"
               required
-              disabled={isLoading}
             />
           </div>
-          <button type="submit" className="login-btn" disabled={isLoading}>
-            {isLoading ? 'Connexion...' : 'Se connecter'}
+
+          <button 
+            type="submit" 
+            className="submit-button" 
+            disabled={loading}
+          >
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
+
+        <div className="auth-links">
+          <Link to="/admin/login" className="admin-link">
+            Accès Administration
+          </Link>
+        </div>
       </div>
     </div>
   );

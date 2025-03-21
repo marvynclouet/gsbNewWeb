@@ -125,6 +125,45 @@ const orderController = {
       console.error('Erreur lors de la récupération de la commande:', error);
       res.status(500).json({ message: 'Erreur lors de la récupération de la commande' });
     }
+  },
+
+  // Récupérer toutes les commandes (pour l'admin)
+  getAllOrders: async (req, res) => {
+    try {
+      const [orders] = await db.query(
+        `SELECT o.*, 
+                u.name as user_name,
+                u.email as user_email,
+                COALESCE(JSON_ARRAYAGG(
+                  CASE WHEN oi.id IS NOT NULL THEN
+                    JSON_OBJECT(
+                      'id', oi.id,
+                      'medicamentId', oi.medicament_id,
+                      'quantity', oi.quantity,
+                      'price', oi.price,
+                      'name', m.name,
+                      'image_url', m.image_url
+                    )
+                  END
+                ), '[]') as items
+         FROM orders o
+         LEFT JOIN order_items oi ON o.id = oi.order_id
+         LEFT JOIN medicaments m ON oi.medicament_id = m.id
+         LEFT JOIN users u ON o.user_id = u.id
+         GROUP BY o.id
+         ORDER BY o.created_at DESC`
+      );
+
+      // Convertir la chaîne JSON en tableau pour chaque commande
+      orders.forEach(order => {
+        order.items = JSON.parse(order.items);
+      });
+
+      res.json(orders);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des commandes:', error);
+      res.status(500).json({ message: 'Erreur lors de la récupération des commandes' });
+    }
   }
 };
 
