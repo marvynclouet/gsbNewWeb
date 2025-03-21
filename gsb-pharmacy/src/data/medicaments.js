@@ -4,7 +4,7 @@ export const medicaments = [
     nom: "Doliprane 1000mg",
     description: "Paracétamol, antalgique et antipyrétique",
     prix: "5.99€",
-    image: "/src/assets/doliprane-1000-mg-doliprane8-1688647599.png",
+    image: "/images/doliprane.jpg",
     stock: true
   },
   {
@@ -12,7 +12,7 @@ export const medicaments = [
     nom: "Efferalgan 500mg",
     description: "Paracétamol, comprimés effervescents",
     prix: "4.99€",
-    image: "/src/assets/efferalgan-500mg-upsa-boite-de-16-cps-effervescents-secables.jpg",
+    image: "/images/efferalgan.jpg",
     stock: true
   },
   {
@@ -20,7 +20,7 @@ export const medicaments = [
     nom: "Nurofen 400mg",
     description: "Ibuprofène, anti-inflammatoire non stéroïdien",
     prix: "6.99€",
-    image: "/src/assets/3400936864986-nurofen-400mg-ibuprofene-12-comprimes-enrobes.webp",
+    image: "/images/ibuprofene.jpg",
     stock: true
   },
   {
@@ -28,7 +28,7 @@ export const medicaments = [
     nom: "Dafalgan 500mg",
     description: "Paracétamol, antalgique et antipyrétique",
     prix: "4.49€",
-    image: "/src/assets/3400936730472-dafalgan-500-mg-16-comprimes.webp",
+    image: "/images/paracetamol.jpg",
     stock: true
   },
   {
@@ -36,7 +36,7 @@ export const medicaments = [
     nom: "Spasfon 80mg",
     description: "Antispasmodique, traitement des douleurs spasmodiques",
     prix: "5.49€",
-    image: "/src/assets/spasfon-80-mg-boite-de-30-comprimes-enrobes.jpg",
+    image: "/images/spasfon.jpg",
     stock: true
   },
   {
@@ -44,7 +44,7 @@ export const medicaments = [
     nom: "Aspirine du Rhône 500mg",
     description: "Acide acétylsalicylique, antalgique et anti-inflammatoire",
     prix: "3.99€",
-    image: "/src/assets/62617965722d6173706972696e652d64752d72686f6e652d3530306d672d35302d636f6d7072696d65732d6661636530865b2f.jpg.webp",
+    image: "/images/aspirine.jpg",
     stock: true
   },
   {
@@ -52,7 +52,7 @@ export const medicaments = [
     nom: "Ibuprofène 400mg",
     description: "Anti-inflammatoire non stéroïdien",
     prix: "4.99€",
-    image: "/src/assets/w-532-h-532-zc-2-ibuprofene-400-mg-autre4-1718809032.png",
+    image: "/images/ibuprofene.jpg",
     stock: true
   },
   {
@@ -60,7 +60,16 @@ export const medicaments = [
     nom: "Paracétamol Biogaran 500mg",
     description: "Antalgique et antipyrétique",
     prix: "3.49€",
-    image: "/src/assets/3400938200577-paracetamol-500-mg-biogaran-16-comprimes.webp",
+    image: "/images/paracetamol.jpg",
     stock: true
   }
-]; 
+];
+
+// Mapping des images pour les médicaments
+export const medicamentImages = {
+  'Paracétamol': '/images/paracetamol.jpg',
+  'Ibuprofène': '/images/ibuprofene.jpg',
+  'Aspirine': '/images/aspirine.jpg',
+  'Doliprane': '/images/doliprane.jpg',
+  'Efferalgan': '/images/efferalgan.jpg'
+}; 

@@ -11,7 +11,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { items = [] } = useCart();
+  const { cart } = useCart();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -30,7 +30,7 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
-  const cartItemCount = Array.isArray(items) ? items.reduce((total, item) => total + (item?.quantity || 0), 0) : 0;
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <nav className="navbar">

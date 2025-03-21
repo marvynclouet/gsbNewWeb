@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../contexts/CartContext';
 import api from '../services/api';
+import MedicamentDetail from '../components/MedicamentDetail';
 import '../styles/Medicaments.css';
 
 const Medicaments = () => {
@@ -8,6 +9,7 @@ const Medicaments = () => {
   const [medicaments, setMedicaments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMedicament, setSelectedMedicament] = useState(null);
 
   useEffect(() => {
     const fetchMedicaments = async () => {
@@ -25,6 +27,19 @@ const Medicaments = () => {
     fetchMedicaments();
   }, []);
 
+  const handleMedicamentClick = (medicament) => {
+    setSelectedMedicament(medicament);
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedMedicament(null);
+  };
+
+  const handleAddToCart = (e, medicament) => {
+    e.stopPropagation();
+    addToCart(medicament);
+  };
+
   if (loading) return <div className="loading">Chargement...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -41,9 +56,17 @@ const Medicaments = () => {
           <div className="header-item action">Action</div>
         </div>
         {medicaments.map((medicament) => (
-          <div key={medicament.id} className="medicament-row">
+          <div 
+            key={medicament.id} 
+            className="medicament-row"
+            onClick={() => handleMedicamentClick(medicament)}
+          >
             <div className="list-item image">
-              <img src={medicament.image_url || '/placeholder.png'} alt={medicament.name} />
+              <img 
+                src={medicament.image_url || '/placeholder.png'} 
+                alt={medicament.name}
+                onError={(e) => e.target.src = '/placeholder.png'}
+              />
             </div>
             <div className="list-item nom">{medicament.name}</div>
             <div className="list-item description">{medicament.description}</div>
@@ -57,7 +80,7 @@ const Medicaments = () => {
               <button 
                 className="commander-btn" 
                 disabled={medicament.stock <= 0}
-                onClick={() => addToCart(medicament)}
+                onClick={(e) => handleAddToCart(e, medicament)}
               >
                 {medicament.stock > 0 ? 'Ajouter au panier' : 'Indisponible'}
               </button>
@@ -65,6 +88,14 @@ const Medicaments = () => {
           </div>
         ))}
       </div>
+
+      {selectedMedicament && (
+        <MedicamentDetail
+          medicament={selectedMedicament}
+          onClose={handleCloseDetail}
+          onAddToCart={handleAddToCart}
+        />
+      )}
     </div>
   );
 };

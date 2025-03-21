@@ -1,40 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../contexts/CartContext';
 import '../styles/Cart.css';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items = [], removeFromCart, updateQuantity } = useCart();
+  const { cart, removeFromCart, updateQuantity, getTotal } = useCart();
 
-  const calculateTotal = () => {
-    return items.reduce((total, item) => {
-      const price = parseFloat(item.price) || 0;
-      const quantity = parseInt(item.quantity) || 0;
-      return total + (price * quantity);
-    }, 0);
+  const formatPrice = (price) => {
+    return parseFloat(price).toFixed(2);
   };
 
-  const handleQuantityChange = (itemId, newQuantity) => {
-    if (newQuantity > 0) {
-      updateQuantity(itemId, newQuantity);
-    }
-  };
-
-  const handleCheckout = () => {
-    navigate('/checkout');
-  };
-
-  if (!items || items.length === 0) {
+  if (cart.length === 0) {
     return (
-      <div className="cart-container">
-        <h2>Votre Panier</h2>
-        <div className="cart-empty">
-          <p>Votre panier est vide</p>
-          <button onClick={() => navigate('/medicaments')}>
-            Continuer vos achats
-          </button>
-        </div>
+      <div className="cart-empty">
+        <p>Votre panier est vide</p>
+        <button onClick={() => navigate('/medicaments')}>Retour aux médicaments</button>
       </div>
     );
   }
@@ -43,51 +24,47 @@ const Cart = () => {
     <div className="cart-container">
       <h2>Votre Panier</h2>
       <div className="cart-items">
-        {items.map((item) => {
-          const price = parseFloat(item.price) || 0;
-          return (
-            <div key={item.id} className="cart-item">
-              <img 
-                src={item.image_url || '/placeholder.png'} 
-                alt={item.name || 'Produit'} 
-                className="item-image" 
-              />
-              <div className="item-details">
-                <h3>{item.name || 'Produit sans nom'}</h3>
-                <p className="item-price">{price.toFixed(2)} €</p>
-                <div className="quantity-controls">
-                  <button
-                    onClick={() => handleQuantityChange(item.id, (item.quantity || 1) - 1)}
-                    className="quantity-btn"
-                  >
-                    -
-                  </button>
-                  <span className="quantity">{item.quantity || 1}</span>
-                  <button
-                    onClick={() => handleQuantityChange(item.id, (item.quantity || 1) + 1)}
-                    className="quantity-btn"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <button
-                onClick={() => removeFromCart(item.id)}
-                className="remove-btn"
+        {cart.map((item) => (
+          <div key={item.id} className="cart-item">
+            <div className="cart-item-image">
+              <img src={item.image_url || '/placeholder.png'} alt={item.name} />
+            </div>
+            <div className="cart-item-info">
+              <h3>{item.name}</h3>
+              <p className="cart-item-price">{formatPrice(item.price)}€</p>
+            </div>
+            <div className="cart-item-quantity">
+              <button 
+                onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                className="quantity-btn"
+                disabled={item.quantity <= 1}
               >
-                Supprimer
+                -
+              </button>
+              <span>{item.quantity}</span>
+              <button 
+                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                className="quantity-btn"
+              >
+                +
               </button>
             </div>
-          );
-        })}
+            <button 
+              onClick={() => removeFromCart(item.id)}
+              className="remove-btn"
+            >
+              Supprimer
+            </button>
+          </div>
+        ))}
       </div>
       <div className="cart-summary">
-        <div className="total">
-          <span>Total:</span>
-          <span>{calculateTotal().toFixed(2)} €</span>
-        </div>
-        <button onClick={handleCheckout} className="checkout-btn">
-          Passer la commande
+        <h3>Total: {formatPrice(getTotal())}€</h3>
+        <button 
+          className="checkout-btn"
+          onClick={() => navigate('/checkout')}
+        >
+          Procéder au paiement
         </button>
       </div>
     </div>

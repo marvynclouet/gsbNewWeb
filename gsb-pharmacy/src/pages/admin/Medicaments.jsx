@@ -6,7 +6,7 @@ import '../../styles/Admin.css';
 const Medicaments = () => {
   const [medicaments, setMedicaments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingMedicament, setEditingMedicament] = useState(null);
   const [formData, setFormData] = useState({
@@ -24,10 +24,11 @@ const Medicaments = () => {
 
   const fetchMedicaments = async () => {
     try {
-      const response = await api.getMedicaments();
-      setMedicaments(response);
+      const data = await api.getMedicaments();
+      setMedicaments(data);
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement des médicaments');
+      setError('Erreur lors du chargement des médicaments');
+      console.error('Erreur:', err);
     } finally {
       setLoading(false);
     }
@@ -61,7 +62,8 @@ const Medicaments = () => {
       });
       fetchMedicaments();
     } catch (err) {
-      setError(err.message || 'Erreur lors de la sauvegarde du médicament');
+      setError('Erreur lors de la sauvegarde du médicament');
+      console.error('Erreur:', err);
     }
   };
 
@@ -84,7 +86,8 @@ const Medicaments = () => {
         await api.deleteMedicament(id);
         fetchMedicaments();
       } catch (err) {
-        setError(err.message || 'Erreur lors de la suppression du médicament');
+        setError('Erreur lors de la suppression du médicament');
+        console.error('Erreur:', err);
       }
     }
   };
@@ -269,7 +272,7 @@ const Medicaments = () => {
                   name="image_url"
                   value={formData.image_url}
                   onChange={handleChange}
-                  placeholder="https://exemple.com/image.jpg"
+                  placeholder="/images/nom-du-medicament.jpg"
                 />
               </div>
               <div className="modal-buttons">

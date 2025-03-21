@@ -247,7 +247,18 @@ const Orders = () => {
                   <select
                     value={order.status}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    style={{ backgroundColor: getStatusColor(order.status) }}
+                    className="status-select"
+                    style={{ 
+                      backgroundColor: getStatusColor(order.status),
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease'
+                    }}
                   >
                     <option value="pending">En attente</option>
                     <option value="processing">En traitement</option>

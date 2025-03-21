@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import '../styles/Checkout.css';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, clearCart } = useCart();
+  const { cart, clearCart, getTotal } = useCart();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     message: ''
@@ -23,14 +23,6 @@ const Checkout = () => {
     }));
   };
 
-  const calculateTotal = () => {
-    return items.reduce((total, item) => {
-      const price = parseFloat(item.price) || 0;
-      const quantity = parseInt(item.quantity) || 0;
-      return total + (price * quantity);
-    }, 0);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -38,18 +30,18 @@ const Checkout = () => {
 
     try {
       const orderData = {
-        items: items.map(item => ({
+        items: cart.map(item => ({
           medicamentId: item.id,
           quantity: item.quantity,
           price: item.price
         })),
-        total: calculateTotal(),
+        total: getTotal(),
         message: formData.message
       };
 
-      const order = await api.createOrder(orderData);
+      const response = await api.createOrder(orderData);
       clearCart();
-      navigate(`/orders/${order.id}`);
+      navigate(`/orders/${response.id}`);
     } catch (err) {
       setError(err.message || 'Une erreur est survenue lors de la création de la commande');
     } finally {
@@ -57,7 +49,7 @@ const Checkout = () => {
     }
   };
 
-  if (!items || items.length === 0) {
+  if (!cart || cart.length === 0) {
     return (
       <div className="checkout-container">
         <h2>Votre Panier est Vide</h2>
@@ -90,26 +82,23 @@ const Checkout = () => {
       <div className="checkout-content">
         <div className="order-summary">
           <h3>Récapitulatif de la Commande</h3>
-          {items.map((item) => {
-            const price = parseFloat(item.price) || 0;
-            return (
-              <div key={item.id} className="order-item">
-                <img 
-                  src={item.image_url || '/placeholder.png'} 
-                  alt={item.name || 'Produit'} 
-                  className="item-image" 
-                />
-                <div className="item-details">
-                  <h4>{item.name || 'Produit sans nom'}</h4>
-                  <p>Quantité: {item.quantity}</p>
-                  <p className="item-price">{price.toFixed(2)} €</p>
-                </div>
+          {cart.map((item) => (
+            <div key={item.id} className="order-item">
+              <img 
+                src={item.image_url || '/placeholder.png'} 
+                alt={item.name} 
+                className="item-image" 
+              />
+              <div className="item-details">
+                <h4>{item.name}</h4>
+                <p>Quantité: {item.quantity}</p>
+                <p className="item-price">{parseFloat(item.price).toFixed(2)} €</p>
               </div>
-            );
-          })}
+            </div>
+          ))}
           <div className="order-total">
             <span>Total:</span>
-            <span>{calculateTotal().toFixed(2)} €</span>
+            <span>{getTotal().toFixed(2)} €</span>
           </div>
         </div>
 

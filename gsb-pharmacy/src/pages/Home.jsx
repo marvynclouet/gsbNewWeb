@@ -7,10 +7,31 @@ const Home = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const recentMedications = [
-    { id: 1, name: 'Doliprane 1000mg', stock: 150, status: 'En stock' },
-    { id: 2, name: 'Amoxicilline 500mg', stock: 75, status: 'Stock faible' },
-    { id: 3, name: 'Ibuprofène 400mg', stock: 200, status: 'En stock' }
+  const featuredMedications = [
+    {
+      id: 1,
+      name: 'Doliprane 1000mg',
+      description: 'Antalgique et antipyrétique',
+      price: '5.99€',
+      image: '/images/doliprane.jpg',
+      stock: 150
+    },
+    {
+      id: 2,
+      name: 'Efferalgan 500mg',
+      description: 'Antalgique et antipyrétique',
+      price: '4.99€',
+      image: '/images/efferalgan.jpg',
+      stock: 120
+    },
+    {
+      id: 3,
+      name: 'Nurofen 400mg',
+      description: 'Anti-inflammatoire non stéroïdien',
+      price: '6.99€',
+      image: '/images/ibuprofene.jpg',
+      stock: 200
+    }
   ];
 
   const recentOrders = [
@@ -29,7 +50,7 @@ const Home = () => {
     <div className="home-container">
       <header className="home-header">
         <h1>Bienvenue sur GSB Pharma</h1>
-        <p>Gérez efficacement vos commandes et votre inventaire de médicaments</p>
+        <p>Votre pharmacie en ligne de confiance</p>
         
         <form onSubmit={handleSearch} className="search-bar">
           <input
@@ -45,6 +66,32 @@ const Home = () => {
       </header>
 
       <main className="home-main">
+        <section className="featured-medications">
+          <div className="section-header">
+            <h2>Nos Médicaments</h2>
+            <button onClick={() => navigate('/medicaments')} className="see-all-btn">
+              Voir tous les médicaments
+            </button>
+          </div>
+          <div className="medications-grid">
+            {featuredMedications.map(med => (
+              <div key={med.id} className="medication-card">
+                <div className="medication-image">
+                  <img src={med.image} alt={med.name} />
+                </div>
+                <div className="medication-info">
+                  <h3>{med.name}</h3>
+                  <p className="description">{med.description}</p>
+                  <p className="price">{med.price}</p>
+                  <span className={`stock-badge ${med.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                    {med.stock > 0 ? 'En stock' : 'Rupture de stock'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="dashboard-grid">
           {/* Section Aperçu Rapide */}
           <section className="quick-stats">
@@ -72,54 +119,8 @@ const Home = () => {
             </div>
           </section>
 
-          {/* Section Médicaments Récents */}
-          <section className="recent-section medications">
-            <div className="section-header">
-              <h2>Médicaments récents</h2>
-              <button onClick={() => navigate('/medicaments')} className="see-all-btn">
-                Voir tout
-              </button>
-            </div>
-            <div className="items-list">
-              {recentMedications.map(med => (
-                <div key={med.id} className="item-card hoverable" onClick={() => navigate(`/medicaments/${med.id}`)}>
-                  <div className="item-info">
-                    <h4>{med.name}</h4>
-                    <p>Stock: {med.stock}</p>
-                  </div>
-                  <span className={`status-badge ${med.status === 'En stock' ? 'success' : 'warning'}`}>
-                    {med.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Section Commandes Récentes */}
-          <section className="recent-section orders">
-            <div className="section-header">
-              <h2>Commandes récentes</h2>
-              <button onClick={() => navigate('/orders')} className="see-all-btn">
-                Voir tout
-              </button>
-            </div>
-            <div className="items-list">
-              {recentOrders.map(order => (
-                <div key={order.id} className="item-card hoverable" onClick={() => navigate(`/orders/${order.id}`)}>
-                  <div className="item-info">
-                    <h4>{order.id}</h4>
-                    <p>{order.date}</p>
-                  </div>
-                  <div className="order-details">
-                    <span className="items-count">{order.items} articles</span>
-                    <span className={`status-badge ${order.status === 'En cours' ? 'primary' : 'warning'}`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+       
+          
         </div>
 
         {/* Section Actions Rapides */}

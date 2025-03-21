@@ -25,6 +25,8 @@ import './styles/App.css'
 import PrivateRoute from './components/PrivateRoute'
 import AdminRoute from './components/AdminRoute'
 import AdminRoutes from './routes/AdminRoutes'
+import Notification from './components/Notification'
+import { useCart } from './contexts/CartContext'
 
 const App = () => {
   return (
@@ -41,6 +43,7 @@ const App = () => {
 const AppContent = () => {
   const { user } = useAuth()
   const location = useLocation()
+  const { notification } = useCart()
   
   const noNavbarRoutes = ['/login', '/register', '/admin/login', '/admin/create']
   const shouldShowNavbar = user && !noNavbarRoutes.includes(location.pathname)
@@ -49,6 +52,7 @@ const AppContent = () => {
     <>
       {shouldShowNavbar && <Navbar />}
       <main className={shouldShowNavbar ? "main-content" : "full-content"}>
+        <Notification message={notification} />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
