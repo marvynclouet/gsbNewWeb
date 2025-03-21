@@ -62,13 +62,7 @@ const Home = () => {
                 <p>Commandes en cours</p>
               </div>
             </div>
-            <div className="stat-card warning">
-              <FaExclamationTriangle className="stat-icon" />
-              <div className="stat-info">
-                <h3>5</h3>
-                <p>Stock faible</p>
-              </div>
-            </div>
+            
             <div className="stat-card info">
               <FaCalendarAlt className="stat-icon" />
               <div className="stat-info">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaPills, FaEnvelope, FaShoppingCart, FaUser, FaListAlt, FaSignOutAlt, FaChevronLeft, FaChevronRight, FaUserCog } from 'react-icons/fa';
+import { FaHome, FaPills, FaEnvelope, FaShoppingCart, FaUser, FaListAlt, FaSignOutAlt } from 'react-icons/fa';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/Navbar.css';
@@ -8,7 +8,6 @@ import logo from '../assets/1 (1).png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -16,10 +15,6 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
-  };
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
   };
 
   const handleLogout = async () => {
@@ -38,14 +33,11 @@ const Navbar = () => {
   const cartItemCount = Array.isArray(items) ? items.reduce((total, item) => total + (item?.quantity || 0), 0) : 0;
 
   return (
-    <nav className={`navbar ${isCollapsed ? 'collapsed' : ''}`}>
+    <nav className="navbar">
       <div className="navbar-brand">
         <Link to="/">
           <img src={logo} alt="GSB Pharmacy" className="navbar-logo" />
         </Link>
-        <button className="collapse-toggle" onClick={toggleCollapse} title={isCollapsed ? "Étendre" : "Rétracter"}>
-          {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
-        </button>
       </div>
 
       <button className="menu-toggle" onClick={toggleMenu}>
@@ -57,47 +49,46 @@ const Navbar = () => {
       <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
         <li>
           <Link to="/" className={isActive('/') ? 'active' : ''}>
-            <FaHome /> {!isCollapsed && <span>Accueil</span>}
+            <FaHome /> Accueil
           </Link>
         </li>
         <li>
           <Link to="/medicaments" className={isActive('/medicaments') ? 'active' : ''}>
-            <FaPills /> {!isCollapsed && <span>Médicaments</span>}
+            <FaPills /> Médicaments
           </Link>
         </li>
         <li>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''}>
-            <FaEnvelope /> {!isCollapsed && <span>Contact</span>}
+            <FaEnvelope /> Contact
           </Link>
         </li>
         {user ? (
           <>
             <li>
               <Link to="/cart" className={isActive('/cart') ? 'active' : ''}>
-                <FaShoppingCart /> 
-                {!isCollapsed && <span>Panier</span>}
+                <FaShoppingCart /> Panier
                 {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
               </Link>
             </li>
             <li>
               <Link to="/orders" className={isActive('/orders') ? 'active' : ''}>
-                <FaListAlt /> {!isCollapsed && <span>Mes Commandes</span>}
+                <FaListAlt /> Mes Commandes
               </Link>
             </li>
             <li>
               <Link to="/profile" className={isActive('/profile') ? 'active' : ''}>
-                <FaUser /> {!isCollapsed && <span>Profil</span>}
+                <FaUser /> Profil
               </Link>
             </li>
             <li>
               <button onClick={handleLogout} className="logout-btn">
-                <FaSignOutAlt /> {!isCollapsed && <span>Déconnexion</span>}
+                <FaSignOutAlt /> Déconnexion
               </button>
             </li>
             {user.role === 'admin' && (
               <li>
                 <Link to="/admin" className="admin-link">
-                  <FaUserCog /> {!isCollapsed && <span>Administration</span>}
+                  Administration
                 </Link>
               </li>
             )}
@@ -106,12 +97,12 @@ const Navbar = () => {
           <>
             <li>
               <Link to="/login" className={isActive('/login') ? 'active' : ''}>
-                <FaUser /> {!isCollapsed && <span>Connexion</span>}
+                <FaUser /> Connexion
               </Link>
             </li>
             <li>
               <Link to="/register" className={isActive('/register') ? 'active' : ''}>
-                <FaUser /> {!isCollapsed && <span>Inscription</span>}
+                Inscription
               </Link>
             </li>
           </>
