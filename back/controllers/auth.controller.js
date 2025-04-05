@@ -55,9 +55,11 @@ const login = async (req, res) => {
     console.log('Tentative de connexion pour:', email);
 
     // Vérifier si l'utilisateur existe
+    console.log('Résultat de la requête:', "users");
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     console.log('Résultat de la requête:', users);
 
+    console.log("ekekkkskks")
     if (users.length === 0) {
       console.log('Utilisateur non trouvé');
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
