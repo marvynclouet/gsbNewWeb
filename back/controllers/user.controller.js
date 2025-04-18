@@ -111,19 +111,19 @@ exports.updateAllSpecicUserInformation = async (req, res) => {
     const { name, siret, email, password, role, phone, address, city, postal_code } = req.body;
     const userId = req.params.id;
 
-    // Vérifier si l'utilisateur existe
+    // Verify an existing user by id
     const [existingUser] = await db.query('SELECT id FROM users WHERE id = ?', [userId]);
     if (existingUser.length === 0) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    // Vérifier si l'email est déjà utilisé par un autre utilisateur
+    // verify an existing email
     const [existingEmail] = await db.query('SELECT id FROM users WHERE email = ? AND id != ?', [email, userId]);
     if (existingEmail.length > 0) {
       return res.status(400).json({ message: 'Cet email est déjà utilisé' });
     }
 
-    // Vérifier si le SIRET est déjà utilisé par un autre utilisateur
+    // Verify an existing SIRET
     const [existingSiret] = await db.query('SELECT id FROM users WHERE siret = ? AND id != ?', [siret, userId]);
     if (existingSiret.length > 0) {
       return res.status(400).json({ message: 'Ce numéro SIRET est déjà utilisé' });
@@ -132,7 +132,7 @@ exports.updateAllSpecicUserInformation = async (req, res) => {
     let updateQuery = 'UPDATE users SET name = ?, siret = ?, email = ?, role = ?, phone = ?, address = ?, city = ?, postal_code = ?';
     let params = [name, siret, email, role, phone, address, city, postal_code];
 
-    // Ajouter le mot de passe à la requête uniquement s'il est fourni
+    // AAdd the password to the request if provided 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updateQuery += ', password = ?';

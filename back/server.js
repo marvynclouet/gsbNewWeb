@@ -40,6 +40,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Une erreur est survenue sur le serveur' });
 });
 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);

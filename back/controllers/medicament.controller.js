@@ -2,7 +2,8 @@ const db = require('../config/db.config');
 
 
   
-// Récupérer tous les médicaments
+// GB, Get All rthe medicaments disponible in bdd (database)
+
 exports.getAllMedicaments = async (req, res) => {
     try {
       const [medicaments] = await db.query(
@@ -16,7 +17,8 @@ exports.getAllMedicaments = async (req, res) => {
 },
 
   
-// Récupérer un médicament par son ID
+// GB, Get medicament by its id
+
 exports.getMedicamentById = async (req, res) => {
     try {
       const [medicaments] = await db.query(
@@ -34,6 +36,9 @@ exports.getMedicamentById = async (req, res) => {
       res.status(500).json({ message: 'Erreur lors de la récupération du médicament' });
     }
 }
+
+
+//GB, Here You can add one specific medicament 
 
 exports.addNewOneMedicament = async (req, res) => {
   try {
@@ -54,6 +59,9 @@ exports.addNewOneMedicament = async (req, res) => {
   }
 }
 
+
+// GB, Here you can update one specific medicament 
+
 exports.updateOneMediacament = async (req, res) => {
   try {
     const { name, description, price, stock, imageUrl, category } = req.body;
@@ -69,6 +77,9 @@ exports.updateOneMediacament = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la mise à jour du médicament' });
   }
 }
+
+
+// GB, Here we can delete one specific medicament
 
 exports.deleteOneMedicament = async (req, res) => {
   try {
