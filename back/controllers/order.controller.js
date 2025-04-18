@@ -1,13 +1,14 @@
 const db = require('../config/db.config');
 
-const orderController = {
-  // Créer une nouvelle commande
-  createOrder: async (req, res) => {
+
+//GB, Here we a new order
+
+exports.createOrder = async (req, res) => {
     try {
       const { items, total, message } = req.body;
       const userId = req.user.userId;
 
-      // Récupérer les informations de l'utilisateur
+      // Retrieve user information
       const [users] = await db.query(
         'SELECT name, address FROM users WHERE id = ?',
         [userId]
@@ -19,7 +20,7 @@ const orderController = {
 
       const user = users[0];
 
-      // Insérer la commande
+      // Insert order
       const [orderResult] = await db.query(
         `INSERT INTO orders (user_id, total, status, delivery_name, delivery_address, delivery_message)
          VALUES (?, ?, 'pending', ?, ?, ?)`,
@@ -28,7 +29,8 @@ const orderController = {
 
       const orderId = orderResult.insertId;
 
-      // Insérer les items de la commande
+      // Insert items of order
+
       for (const item of items) {
         await db.query(
           `INSERT INTO order_items (order_id, medicament_id, quantity, price)
@@ -45,10 +47,13 @@ const orderController = {
       console.error('Erreur lors de la création de la commande:', error);
       res.status(500).json({ message: 'Erreur lors de la création de la commande' });
     }
-  },
+},
 
-  // Récupérer toutes les commandes d'un utilisateur
-  getUserOrders: async (req, res) => {
+
+
+//GB,  Retreive all the orders/commands made b one user
+
+exports.getUserOrders = async (req, res) => {
     try {
       const userId = req.user.userId;
       const [orders] = await db.query(
@@ -74,7 +79,7 @@ const orderController = {
         [userId]
       );
 
-      // Convertir la chaîne JSON en tableau pour chaque commande
+      // Convert
       orders.forEach(order => {
         order.items = JSON.parse(order.items);
       });
@@ -84,10 +89,14 @@ const orderController = {
       console.error('Erreur lors de la récupération des commandes:', error);
       res.status(500).json({ message: 'Erreur lors de la récupération des commandes' });
     }
-  },
+  
+},
 
-  // Récupérer une commande spécifique
-  getOrder: async (req, res) => {
+
+
+//GB, Retreive an specific command 
+
+exports.getOrder = async (req, res) => {
     try {
       const orderId = req.params.id;
       const userId = req.user.userId;
@@ -118,7 +127,7 @@ const orderController = {
         return res.status(404).json({ message: 'Commande non trouvée' });
       }
 
-      // Convertir la chaîne JSON en tableau
+      // Convert
       orders[0].items = JSON.parse(orders[0].items);
       res.json(orders[0]);
     } catch (error) {
@@ -127,8 +136,11 @@ const orderController = {
     }
   },
 
-  // Récupérer toutes les commandes (pour l'admin)
-  getAllOrders: async (req, res) => {
+
+//--------SPECIAL--ADMIN---------------
+
+//GB, Retreive all the command 
+exports.getAllOrders = async (req, res) => {
     try {
       const [orders] = await db.query(
         `SELECT o.*, 
@@ -164,7 +176,93 @@ const orderController = {
       console.error('Erreur lors de la récupération des commandes:', error);
       res.status(500).json({ message: 'Erreur lors de la récupération des commandes' });
     }
-  }
-};
+}
 
-module.exports = orderController; 
+
+//GB, Here we change the status of one order
+
+exports.updateOneSpecificCommandStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const orderId = req.params.id;
+
+    // Verify an existing order 
+    const [orders] = await db.query('SELECT id FROM orders WHERE id = ?', [orderId]);
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'Commande non trouvée' });
+    }
+
+    // updtae the status
+    await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+
+    res.json({ message: 'Statut de la commande mis à jour avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du statut:', error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du statut' });
+  }
+}
+
+
+
+//GB, Here we update one order information
+
+exports.modifyOneSpecificOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { delivery_name, delivery_address, delivery_message, total, items } = req.body;
+
+    // Vérifier si la commande existe
+    const [orders] = await db.query('SELECT id FROM orders WHERE id = ?', [orderId]);
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'Commande non trouvée' });
+    }
+
+    // Mettre à jour les informations de la commande
+    await db.query(
+      'UPDATE orders SET delivery_name = ?, delivery_address = ?, delivery_message = ?, total = ? WHERE id = ?',
+      [delivery_name, delivery_address, delivery_message, total, orderId]
+    );
+
+    // Supprimer les anciens items
+    await db.query('DELETE FROM order_items WHERE order_id = ?', [orderId]);
+
+    // Ajouter les nouveaux items
+    for (const item of items) {
+      await db.query(
+        'INSERT INTO order_items (order_id, medicament_id, quantity, price) VALUES (?, ?, ?, ?)',
+        [orderId, item.medicamentId, item.quantity, item.price]
+      );
+    }
+
+    res.json({ message: 'Commande mise à jour avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la commande:', error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de la commande' });
+  }
+}
+
+
+//GB, Here we delete one given specific command
+
+exports.deleteOneSpecificCommand = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    // Vérifier si la commande existe
+    const [orders] = await db.query('SELECT id FROM orders WHERE id = ?', [orderId]);
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'Commande non trouvée' });
+    }
+
+    // Supprimer d'abord les items de la commande (à cause de la contrainte de clé étrangère)
+    await db.query('DELETE FROM order_items WHERE order_id = ?', [orderId]);
+
+    // Supprimer la commande
+    await db.query('DELETE FROM orders WHERE id = ?', [orderId]);
+
+    res.json({ message: 'Commande supprimée avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la commande:', error);
+    res.status(500).json({ message: 'Erreur lors de la suppression de la commande' });
+  }
+}

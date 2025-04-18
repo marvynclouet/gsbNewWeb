@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken');
 
+
+
+//Here we verify if the user is enable to make an action that required a valid token 
+
 const authMiddleware = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -16,5 +20,8 @@ const authMiddleware = (req, res, next) => {
     res.status(401).json({ message: 'Token invalide' });
   }
 };
+
+
+
 
 module.exports = authMiddleware; 

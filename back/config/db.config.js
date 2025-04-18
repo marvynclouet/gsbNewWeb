@@ -9,7 +9,12 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'bddfinalgsb',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  authPlugins: {
+    mysql_native_password: ()=>{
+      return require('../mysql2/lib/auth_plugins/mysql_native_password')
+    }
+  }
 });
 
 const promisePool = pool.promise();

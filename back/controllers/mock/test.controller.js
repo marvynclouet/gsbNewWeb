@@ -1,3 +1,7 @@
+
+//-------THIS CONTROLLER SHOULD ONLY BE USED FOR MAKING TEMPORARY TESTS
+
+
 const bcrypt = require('bcryptjs');
 const db = require('./config/db.config');
 
