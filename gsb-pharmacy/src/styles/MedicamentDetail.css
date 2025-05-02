@@ -114,9 +114,10 @@
 .medicament-detail-description {
   display: flex;
   gap: 1rem;
-  background: #f5f9f7;
   padding: 1.5rem;
   border-radius: 12px;
+  background: #f5f9f7;
+  flex-direction: column;
   border: 1px solid #e8f5e9;
 }
 

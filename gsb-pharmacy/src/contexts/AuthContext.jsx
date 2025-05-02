@@ -1,37 +1,14 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import api from '../utils/api';
+
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const [user, setUser] = useState();
   const [error, setError] = useState(null);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setUser({
-        role: role || 'user',
-        token
-      });
-    } catch (err) {
-      console.error('Erreur lors de la vérification de l\'authentification:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
 
   const login = async (email, password, isAdmin = false) => {
     try {
@@ -51,7 +28,8 @@ export const AuthProvider = ({ children }) => {
         
         setUser(userData);
         return userData;
-      } else {
+      }
+      else {
         throw new Error('Réponse de connexion invalide');
       }
     } catch (err) {
@@ -68,17 +46,12 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
-    loading,
     error,
     login,
     logout,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin'
   };
-
-  if (loading) {
-    return <div className="loading">Chargement...</div>;
-  }
 
   return (
     <AuthContext.Provider value={value}>

@@ -63,14 +63,19 @@ const Medicaments = () => {
           >
             <div className="list-item image">
               <img 
-                src={medicament.image_url || '/placeholder.png'} 
+                src={ medicament.image_url ? 
+                        (medicament.image_url.includes("http") ?
+                              medicament.image_url
+                            : `http://localhost:5000/api/uploads/medicaments/${medicament.image_url}`)
+                      : ""
+                } 
                 alt={medicament.name}
                 onError={(e) => e.target.src = '/placeholder.png'}
               />
             </div>
-            <div className="list-item nom">{medicament.name}</div>
-            <div className="list-item description">{medicament.description}</div>
-            <div className="list-item prix">{medicament.price}€</div>
+            <span className="list-item nom">{medicament.name}</span>
+            <span className="list-item description">{ medicament.description  }</span>
+            <span className="list-item prix">{medicament.price}€</span>
             <div className="list-item stock">
               <span className={`stock-badge ${medicament.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
                 {medicament.stock > 0 ? 'En stock' : 'Rupture de stock'}

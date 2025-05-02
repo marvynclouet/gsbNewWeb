@@ -3,7 +3,6 @@ const API_URL = 'http://localhost:5000/api';
 const getHeaders = () => {
   const token = localStorage.getItem('token');
   return {
-    'Content-Type': 'application/json',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
   };
 };
@@ -19,6 +18,19 @@ const api = {
     return response.json();
   },
 
+  put: async (endpoint, formData) => {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "PUT",
+      body: formData,
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      console.log({response})
+      throw new Error('Erreur lors de la requête');
+    }
+    return response.json();
+  },
+
   post: async (endpoint, data) => {
     try {
       console.log('Envoi de la requête à:', `${API_URL}${endpoint}`);
@@ -26,8 +38,8 @@ const api = {
       
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(data)
+        body: data,
+        headers: getHeaders()
       });
 
       if (!response.ok) {
@@ -43,7 +55,20 @@ const api = {
     }
   },
 
+  delete: async (endpoint)=>{
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      console.log({response, data: response.json()})
+      throw new Error('Erreur lors de la requête');
+    }
+    return response.json();
+  },
+
   // Auth
+  
   login: async (email, password) => {
     try {
       console.log('Tentative de connexion avec:', { email, password });
@@ -55,6 +80,7 @@ const api = {
       throw error;
     }
   },
+
   register: (userData) => api.post('/auth/register', userData),
   logout: () => {
     // Suppression du token et des données utilisateur du localStorage
@@ -65,26 +91,31 @@ const api = {
   },
 
   // Orders
+  
   getOrders: () => api.get('/orders'),
   getUserOrders: () => api.get('/orders'),
   getOrder: (id) => api.get(`/orders/${id}`),
   createOrder: (orderData) => api.post('/orders', orderData),
 
   // Cart
+
   getCart: () => api.get('/cart'),
   addToCart: (item) => api.post('/cart', item),
   updateCartItem: (id, quantity) => api.post(`/cart/${id}`, { quantity }),
   removeFromCart: (id) => api.post(`/cart/${id}/remove`),
 
   // Medicaments
+
   getMedicaments: () => api.get('/medicaments'),
   getMedicament: (id) => api.get(`/medicaments/${id}`),
 
   // User
+
   getProfile: () => api.get('/users/profile'),
   updateProfile: (userData) => api.post('/users/profile', userData),
 
   // Fonctions pour l'administration
+  
   getUsers: () => api.get('/users'),
   createUser: (userData) => api.post('/users', userData),
   updateUser: (userId, userData) => api.put(`/users/${userId}`, userData),
@@ -94,6 +125,7 @@ const api = {
   deleteMedicament: (medicamentId) => api.delete(`/medicaments/${medicamentId}`),
   updateOrderStatus: (orderId, status) => api.put(`/orders/${orderId}/status`, { status }),
   getStats: () => api.get('/stats')
+
 };
 
 export default api; 

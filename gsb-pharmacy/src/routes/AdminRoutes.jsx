@@ -14,7 +14,6 @@ const AdminRoutes = () => {
   if (!isAuthenticated || !isAdmin) {
     return <Navigate to="/admin/login" replace />;
   }
-
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />

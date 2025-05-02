@@ -5,7 +5,9 @@ import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 import '../../styles/Admin.css';
 
 const Orders = () => {
+
   const navigate = useNavigate();
+  
   const { isAdmin } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +17,7 @@ const Orders = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedOrder, setEditedOrder] = useState(null);
 
+
   useEffect(() => {
     if (!isAdmin) {
       navigate('/admin/login');
@@ -22,6 +25,8 @@ const Orders = () => {
     }
     fetchOrders();
   }, [isAdmin, navigate]);
+
+
 
   const fetchOrders = async () => {
     try {
@@ -48,6 +53,7 @@ const Orders = () => {
     }
   };
 
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
@@ -65,6 +71,8 @@ const Orders = () => {
     }
   };
 
+
+
   const getStatusLabel = (status) => {
     switch (status) {
       case 'pending':
@@ -81,6 +89,8 @@ const Orders = () => {
         return status;
     }
   };
+
+
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -105,6 +115,8 @@ const Orders = () => {
     }
   };
 
+
+
   const formatDate = (dateString) => {
     const options = { 
       day: '2-digit',
@@ -116,9 +128,13 @@ const Orders = () => {
     return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
+
+
   const calculateTotal = (items) => {
     return items.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
   };
+
+
 
   const handleDelete = async (orderId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {

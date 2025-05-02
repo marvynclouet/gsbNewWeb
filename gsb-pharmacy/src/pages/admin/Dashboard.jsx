@@ -4,6 +4,7 @@ import { FaPills, FaUsers, FaShoppingCart, FaChartBar } from 'react-icons/fa';
 import '../../styles/Admin.css';
 
 const Dashboard = () => {
+
   const cards = [
     {
       title: 'Gestion des Médicaments',
@@ -34,6 +35,8 @@ const Dashboard = () => {
       color: '#9C27B0'
     }
   ];
+
+
 
   return (
     <div className="admin-container">

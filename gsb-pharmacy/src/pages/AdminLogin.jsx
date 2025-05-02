@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/Auth.css';
@@ -14,6 +14,7 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -21,6 +22,14 @@ const AdminLogin = () => {
     });
     setError('');
   };
+
+
+  useEffect(()=>{
+    const token = localStorage.getItem('token')
+    if(token){
+      navigate('/admin/dashboard')
+    }
+  },[navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault();

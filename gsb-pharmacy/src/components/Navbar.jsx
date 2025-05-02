@@ -7,11 +7,14 @@ import '../styles/Navbar.css';
 import logo from '../assets/1 (1).png';
 
 const Navbar = () => {
+
   const [isOpen, setIsOpen] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+
   const { cart } = useCart();
+  const { user, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

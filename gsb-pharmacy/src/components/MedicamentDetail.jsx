@@ -15,7 +15,12 @@ const MedicamentDetail = ({ medicament, onClose, onAddToCart }) => {
         <div className="medicament-detail-content">
           <div className="medicament-detail-image">
             <img 
-              src={medicament.image_url || '/placeholder.png'} 
+              src={ medicament.image_url ? 
+                      (medicament.image_url.includes("http") ?
+                            medicament.image_url
+                          : `http://localhost:5000/api/uploads/medicaments/${medicament.image_url}`)
+                    : ""
+              } 
               alt={medicament.name}
               onError={(e) => e.target.src = '/placeholder.png'}
             />

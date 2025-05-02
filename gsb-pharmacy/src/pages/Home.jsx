@@ -34,10 +34,6 @@ const Home = () => {
     }
   ];
 
-  const recentOrders = [
-    { id: 'CMD-001', date: '2024-03-15', status: 'En cours', items: 5 },
-    { id: 'CMD-002', date: '2024-03-14', status: 'En préparation', items: 3 }
-  ];
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -74,21 +70,23 @@ const Home = () => {
             </button>
           </div>
           <div className="medications-grid">
-            {featuredMedications.map(med => (
-              <div key={med.id} className="medication-card">
-                <div className="medication-image">
-                  <img src={med.image} alt={med.name} />
+            {
+              featuredMedications.map(med => (
+                <div key={med.id} className="medication-card">
+                  <div className="medication-image">
+                    <img src={med.image} alt={med.name} />
+                  </div>
+                  <div className="medication-info">
+                    <h3>{med.name}</h3>
+                    <p className="description">{med.description}</p>
+                    <p className="price">{med.price}</p>
+                    <span className={`stock-badge ${med.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                      {med.stock > 0 ? 'En stock' : 'Rupture de stock'}
+                    </span>
+                  </div>
                 </div>
-                <div className="medication-info">
-                  <h3>{med.name}</h3>
-                  <p className="description">{med.description}</p>
-                  <p className="price">{med.price}</p>
-                  <span className={`stock-badge ${med.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                    {med.stock > 0 ? 'En stock' : 'Rupture de stock'}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            }
           </div>
         </section>
 

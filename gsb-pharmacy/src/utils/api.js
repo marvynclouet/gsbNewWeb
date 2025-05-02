@@ -113,6 +113,7 @@ const api = {
         });
         return handleResponse(response);
       } catch (error) {
+        console.log(error)
         throw new Error('Erreur lors de la création du compte administrateur');
       }
     }
@@ -153,6 +154,18 @@ const api = {
       }
     }
   }
+
 };
 
 export default api; 
+
+
+function objectToFormData(obj) {
+  const formData = new FormData();
+  for (const key in obj) {
+      formData.append(key, obj[key]);
+  }
+  return formData;
+}
+
+export { objectToFormData }
