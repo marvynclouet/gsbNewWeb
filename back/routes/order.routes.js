@@ -36,22 +36,33 @@ router.get('/:id', orderController.getOrder);
 // Route pour mettre à jour le statut d'une commande
 router.put('/:id/status', isAdmin, async (req, res) => {
   try {
+    console.log('Status update request:', {
+      orderId: req.params.id,
+      status: req.body.status,
+      userId: req.user.userId
+    });
+
     const { status } = req.body;
     const orderId = req.params.id;
 
     // Vérifier si la commande existe
     const [orders] = await db.query('SELECT id FROM orders WHERE id = ?', [orderId]);
     if (orders.length === 0) {
+      console.log('Order not found:', orderId);
       return res.status(404).json({ message: 'Commande non trouvée' });
     }
 
     // Mettre à jour le statut
     await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+    console.log('Status updated successfully');
 
-    res.json({ message: 'Statut de la commande mis à jour avec succès' });
+    res.json({ message: 'Statut mis à jour avec succès' });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour du statut:', error);
-    res.status(500).json({ message: 'Erreur lors de la mise à jour du statut' });
+    console.error('Error updating order status:', error);
+    res.status(500).json({ 
+      message: 'Erreur lors de la mise à jour du statut',
+      error: error.message 
+    });
   }
 });
 
