@@ -4,6 +4,20 @@ const auth = require('../middleware/auth.middleware');
 const db = require('../config/db.config');
 const medicamentController = require('../controllers/medicament.controller');
 
+// Recherche de médicaments par nom (query param: q)
+router.get('/search', async (req, res) => {
+  const q = req.query.q || '';
+  try {
+    const [results] = await db.query(
+      "SELECT id, name, description, price, stock, image_url FROM medicaments WHERE name LIKE ?",
+      [`%${q}%`]
+    );
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur serveur', details: err });
+  }
+});
+
 // Obtenir tous les médicaments
 router.get('/', medicamentController.getAllMedicaments);
 
