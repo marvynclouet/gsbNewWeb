@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
         ? await api.auth.adminLogin(email, password)
         : await api.auth.login(email, password);
 
+        console.log({ response })
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.user?.role || 'user');

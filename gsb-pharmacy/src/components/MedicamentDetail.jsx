@@ -38,11 +38,11 @@ const MedicamentDetail = ({ medicament, onClose, onAddToCart }) => {
             </div>
             <div className="medicament-detail-description">
               <h3>Description</h3>
-              <p>{medicament.description}</p>
+              <p>{ medicament.description }</p>
             </div>
             <button 
-              className="add-to-cart-btn"
-              disabled={medicament.stock <= 0}
+              className={ medicament.stock <= 0 ? "add-to-cart-btn" : "commander-btn"}
+              disabled={ medicament.stock <= 0 }
               onClick={() => onAddToCart(null, medicament)}
             >
               {medicament.stock > 0 ? 'Ajouter au panier' : 'Indisponible'}

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import '../styles/Checkout.css';
+
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Checkout = () => {
 
     try {
       const orderData = {
+        userId: user.id,
         items: cart.map(item => ({
           medicamentId: item.id,
           quantity: item.quantity,
@@ -39,15 +41,24 @@ const Checkout = () => {
         message: formData.message
       };
 
+      console.log(orderData, 'order content')
       const response = await api.createOrder(orderData);
       clearCart();
       navigate(`/orders/${response.id}`);
     } catch (err) {
       setError(err.message || 'Une erreur est survenue lors de la création de la commande');
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
+
+
+  useEffect(()=>{
+    if(user){
+      console.log({ user })
+    }
+  },[user])
 
   if (!cart || cart.length === 0) {
     return (
@@ -82,7 +93,7 @@ const Checkout = () => {
       <div className="checkout-content">
         <div className="order-summary">
           <h3>Récapitulatif de la Commande</h3>
-          {cart.map((item) => (
+          { user && cart.map((item) => (
             <div key={item.id} className="order-item">
               <img 
                 src={item.image_url || '/placeholder.png'} 
@@ -108,10 +119,10 @@ const Checkout = () => {
           <div className="form-group">
             <label htmlFor="name">Nom</label>
             <input
+              disabled
               type="text"
               id="name"
               value={user?.name || ''}
-              disabled
             />
           </div>
 
@@ -120,7 +131,7 @@ const Checkout = () => {
             <input
               type="text"
               id="address"
-              value={user?.address || ''}
+              value={user?.email || ''}
               disabled
             />
           </div>

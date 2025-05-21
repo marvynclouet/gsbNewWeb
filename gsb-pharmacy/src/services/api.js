@@ -25,17 +25,19 @@ const api = {
       headers: getHeaders()
     });
     if (!response.ok) {
-      console.log({response})
+      console.log({ response })
       throw new Error('Erreur lors de la requête');
     }
     return response.json();
   },
 
   post: async (endpoint, data) => {
+
+    console.log(data, 'requete tres moche')
     try {
       console.log('Envoi de la requête à:', `${API_URL}${endpoint}`);
-      console.log('Données envoyées:', data);
-      
+      const donnee =  { ...data }
+      console.log(donnee, 'test')
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         body: data,
