@@ -1,9 +1,11 @@
 const express = require('express');
+
+const path = require('path')
 const cors = require('cors');
 const dotenv = require('dotenv');
-const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
+
 const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
 const medicamentRoutes = require('./routes/medicament.routes');
@@ -15,8 +17,6 @@ dotenv.config();
 
 const app = express();
 
-// Middleware de sécurité
-app.use(helmet());
 
 // Middleware de compression
 app.use(compression());
@@ -114,6 +114,8 @@ app.options('*', cors({
 }));
 
 
+app.use(express.json({ limit: '10kb' }))
+
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -124,7 +126,19 @@ app.use('/api/medicaments', medicamentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', statsRoutes);
 
+//provide file located at uploads/medicaments
+
+
+app.use('/uploads/medicaments', cors(), (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, 'uploads/medicaments')));
+
+
+
 // Route de test améliorée
+
 app.get('/api/test', (req, res) => {
   console.log('Test route accessed from:', req.ip);
   console.log('Request headers:', req.headers);

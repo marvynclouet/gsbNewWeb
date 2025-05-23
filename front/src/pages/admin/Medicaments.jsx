@@ -93,6 +93,7 @@ const Medicaments = () => {
 
   const handleEdit = (medicament) => {
     if(medicament){
+      console.log(`http://localhost:5000/api/uploads/medicaments/${medicament.image_url}`)
       setEditingMedicament(medicament);
       console.log({medicament})
       setFormData({
@@ -174,11 +175,14 @@ const Medicaments = () => {
                       src={ medicament.image_url ? 
                               (medicament.image_url.includes("http") ?
                                     medicament.image_url
-                                  : `http://localhost:5000/api/uploads/medicaments/${medicament.image_url}`)
+                                  : `http://localhost:5000/uploads/medicaments/${medicament.image_url}`)
                             : "#"
                       } 
                       alt= 'Image'
-                      onError={(e) => e.target.src = '/placeholder.png'}
+                      onError={(e) =>{
+                        e.target.onerror = null;
+                        e.target.src = '/placeholder.jpeg'
+                      }}
                     />
                   </div>
                 </td>

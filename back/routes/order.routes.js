@@ -4,6 +4,8 @@ const orderController = require('../controllers/order.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 const db = require('../config/db.config');
 
+
+
 // Middleware pour vérifier si l'utilisateur est admin
 const isAdmin = async (req, res, next) => {
   try {
@@ -17,6 +19,7 @@ const isAdmin = async (req, res, next) => {
     res.status(500).json({ message: 'Erreur lors de la vérification du rôle' });
   }
 };
+
 
 // Toutes les routes nécessitent une authentification
 router.use(authMiddleware);
