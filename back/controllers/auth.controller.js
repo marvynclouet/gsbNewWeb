@@ -67,6 +67,9 @@ const login = async (req, res) => {
     console.log('Utilisateur trouvé:', { id: user.id, email: user.email });
 
     // Vérifier le mot de passe
+    console.log({user})
+    console.log({email, password})
+
     const isValidPassword = await bcrypt.compare(password, user.password);
     console.log('Mot de passe valide:', isValidPassword);
 

@@ -87,9 +87,6 @@ const api = {
     return api.post('/auth/login', credentials);
   },
 
-  adminLogin: async (email, password) => {
-    return api.post('/auth/admin/login', { email, password });
-  },
 
   register: async (userData) => {
     return api.post('/auth/register', userData);
@@ -163,3 +160,14 @@ const api = {
 };
 
 export default api; 
+
+
+function objectToFormData(obj) {
+  const formData = new FormData();
+  for (const key in obj) {
+      formData.append(key, obj[key]);
+  }
+  return formData;
+}
+
+export { objectToFormData }

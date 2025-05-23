@@ -44,7 +44,7 @@ const Home = () => {
   // Filtrage en temps réel
   useEffect(() => {
     if (searchQuery.trim()) {
-      fetch(`http://localhost:5001/api/medicaments/search?q=${encodeURIComponent(searchQuery)}`)
+      fetch(`http://localhost:5000/api/medicaments/search?q=${encodeURIComponent(searchQuery)}`)
         .then(res => res.json())
         .then(data => {
           setSearchResults(data);
@@ -74,7 +74,7 @@ const Home = () => {
   useEffect(() => {
     if (!user?.id) return;
     console.log('ID utilisateur envoyé pour stats:', user.id);
-    fetch(`http://localhost:5001/api/stats?user_id=${user.id}`)
+    fetch(`http://localhost:5000/api/stats?user_id=${user.id}`)
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(() => setStats({ medicaments: 0, commandes: 0, livraisons: 0 }));

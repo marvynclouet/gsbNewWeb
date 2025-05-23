@@ -27,6 +27,7 @@ const Login = () => {
     setLoading(true);
 
     try {
+      console.log({formData})
       await login({
         email: formData.email,
         password: formData.password

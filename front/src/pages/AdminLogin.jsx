@@ -28,7 +28,8 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      await login(formData.email, formData.password, true);
+      console.log({formData})
+      await login(formData);
       navigate('/admin/dashboard');
     } catch (err) {
       console.error('Erreur de connexion:', err);

@@ -61,9 +61,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setError(null);
-      const response = credentials.isAdmin 
-        ? await api.adminLogin(credentials.email, credentials.password)
-        : await api.login(credentials);
+      console.log({credentials})
+      const response = await api.login(credentials);
 
       if (response && response.token) {
         localStorage.setItem('token', response.token);
