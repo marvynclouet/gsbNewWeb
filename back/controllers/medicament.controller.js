@@ -1,5 +1,6 @@
+const fs = require('fs')
+const path = require('path')
 const db = require('../config/db.config');
-
 
   
 // GB, Get All rthe medicaments disponible in bdd (database)
@@ -9,9 +10,10 @@ exports.getAllMedicaments = async (req, res) => {
       const [medicaments] = await db.query(
         'SELECT * FROM medicaments ORDER BY name ASC'
       );
-      res.json(medicaments);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des médicaments:', error);
+      return res.json(medicaments);
+    }
+    catch (error) {
+      console.error('Erreur lors de la création de l\'order (la commande): ', error);
       res.status(500).json({ message: 'Erreur lors de la récupération des médicaments' });
     }
 },
@@ -32,7 +34,7 @@ exports.getMedicamentById = async (req, res) => {
 
       res.json(medicaments[0]);
     } catch (error) {
-      console.error('Erreur lors de la récupération du médicament:', error);
+      console.error('Erreur lors de la récupération du médicament: ', error);
       res.status(500).json({ message: 'Erreur lors de la récupération du médicament' });
     }
 }
@@ -42,18 +44,39 @@ exports.getMedicamentById = async (req, res) => {
 
 exports.addNewOneMedicament = async (req, res) => {
   try {
-    const { name, description, price, stock, imageUrl, category } = req.body;
+    let sqlParams;
+    const file = req.file;
+    const { name, description, price, stock, image_url, category } = req.body;
+
+    if(image_url){
+      sqlParams = [name, description, price, stock, image_url, category]
+    }
+    else if(file){
+      const fileName = Date.now() + file.originalname
+      const filePath = path.join(__dirname, '../uploads/medicaments/'+ fileName)
+      fs.writeFileSync(filePath, file.buffer)
+      sqlParams = [name, description, price, stock, fileName, category]
+    }
+    else{
+      return res.status(500).json({ message: 'Image data missing' });
+    }
 
     const [result] = await db.query(
       'INSERT INTO medicaments (name, description, price, stock, image_url, category) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, description, price, stock, imageUrl, category]
+      sqlParams,
     );
 
-    res.status(201).json({
+    if(!result){
+      console.error('Quelques chose ne va pas (bdd response) ', error);
+      return res.status(500).json({ message: 'Erreur lors de l\'ajout du médicament' });
+    }
+
+    return res.status(201).json({
       message: 'Médicament ajouté avec succès',
       id: result.insertId
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Erreur lors de l\'ajout du médicament:', error);
     res.status(500).json({ message: 'Erreur lors de l\'ajout du médicament' });
   }
@@ -64,15 +87,48 @@ exports.addNewOneMedicament = async (req, res) => {
 
 exports.updateOneMediacament = async (req, res) => {
   try {
-    const { name, description, price, stock, imageUrl, category } = req.body;
+    let sqlParams;
+    const file = req.file;
+    let exsitingMedicament;
+    const { id } = req.params;
+    const { name, description, price, stock, image_url, category } = req.body ;
+
+    const response = await db.query(
+      "SELECT image_url FROM Medicaments WHERE id= ?",
+      [id]
+    )
+
+    if(response && !Array.isArray(response[0])){
+      return res.status(400).json({message: "Such an medicament with this id doesn't exist"})
+    }
+
+    exsitingMedicament = response[0]
+
+    if(image_url){
+      sqlParams = [name, description, price, stock, image_url, id]
+    }
+    else if(file){
+      const fileName = Date.now() + file.originalname
+      const filePath = path.join(__dirname, '../uploads/medicaments/'+ fileName)
+      fs.writeFileSync(filePath, file.buffer)
+      sqlParams = [name, description, price, stock, fileName, id]
+    }
+    else{
+      sqlParams = [name, description, price, stock, exsitingMedicament[0].image_url, id]
+    }
 
     await db.query(
-      'UPDATE medicaments SET name = ?, description = ?, price = ?, stock = ?, image_url = ?, category = ? WHERE id = ?',
-      [name, description, price, stock, imageUrl, category, req.params.id]
+      `
+        UPDATE medicaments SET name = ?, description = ?, 
+               price = ?, stock = ?, image_url = ?
+        WHERE id = ?
+      `,
+      sqlParams
     );
 
-    res.json({ message: 'Médicament mis à jour avec succès' });
-  } catch (error) {
+    return res.status(200).json({ message: 'Médicament mis à jour avec succès' });
+  }
+  catch (error) {
     console.error('Erreur lors de la mise à jour du médicament:', error);
     res.status(500).json({ message: 'Erreur lors de la mise à jour du médicament' });
   }
@@ -83,10 +139,46 @@ exports.updateOneMediacament = async (req, res) => {
 
 exports.deleteOneMedicament = async (req, res) => {
   try {
-    await db.query('DELETE FROM medicaments WHERE id = ?', [req.params.id]);
-    res.json({ message: 'Médicament supprimé avec succès' });
-  } catch (error) {
-    console.error('Erreur lors de la suppression du médicament:', error);
-    res.status(500).json({ message: 'Erreur lors de la suppression du médicament' });
+
+    let exsitingMedicament;
+    const { id }= req.params
+
+
+    const response = await db.query(
+      "SELECT image_url FROM Medicaments WHERE id= ?",
+      [id]
+    )
+
+    if(response && !Array.isArray(response[0])){
+      return res.status(400).json({message: "Such an medicament with this id doesn't exist"})
+    }
+
+    const deleteResponse = await db.query('DELETE FROM medicaments WHERE id = ?', [req.params.id]);
+
+    if( deleteResponse.affectedRows < 1 ){
+      return res.status(400).json({message: "Such an medicament with this id doesn't exist"})
+    }
+
+
+    exsitingMedicament = response[0]
+
+    console.log(exsitingMedicament)
+
+    if(!exsitingMedicament[0].image_url.toString().includes('http')){
+      const filePath = path.join(__dirname, `../uploads/medicaments/${exsitingMedicament[0].image_url}`)
+      console.log({filePath})
+      fs.unlink(filePath, async (err)=>{
+        if(err){
+          return res.status(400).json({message: "Such an medicament with this id doesn't exist"})
+        }
+        console.log("Delete file succed")
+        return res.json({ message: 'Médicament supprimé avec succès' });
+      })
+    }
+
+  }
+  catch (error) {
+    console.error('Erreur lors de la suppression du médicament : ', error);
+    return res.status(500).json({ message: 'Erreur lors de la suppression du médicament' });
   }
 }

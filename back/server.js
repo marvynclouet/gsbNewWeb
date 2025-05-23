@@ -8,7 +8,8 @@ const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
 const userRoutes = require('./routes/user.routes');
 const medicamentRoutes = require('./routes/medicament.routes');
-
+const mockController = require('../back/controllers/mock/generate_hash')
+const fileProviderRouter = require('./routes/files.provider.routers')
 // Charger les variables d'environnement
 dotenv.config();
 
@@ -24,14 +25,14 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/medicaments', medicamentRoutes);
 app.use('/api/users', userRoutes);
 
-app.use(express.static('./upload/users/images/'))
+app.use('/api/uploads', fileProviderRouter)
 
+app.post('/api/mock', mockController.generateHash)
 
 // Route de test
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Le serveur fonctionne correctement' });
 });
-
 
 
 // Gestion des erreurs

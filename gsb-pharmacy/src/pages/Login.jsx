@@ -9,9 +9,9 @@ const Login = () => {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const [ error, setError ] = useState('');
+  const [ loading, setLoading ] = useState(false);
 
   const navigate = useNavigate()
   
