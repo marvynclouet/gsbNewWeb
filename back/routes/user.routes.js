@@ -111,6 +111,8 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
+    await db.query('DELETE FROM orders WHERE user_id = ?', [userId]);
+
     await db.query('DELETE FROM users WHERE id = ?', [userId]);
 
     res.json({ message: 'Utilisateur supprimé avec succès' });
