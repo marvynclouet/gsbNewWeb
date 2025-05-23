@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaBox, FaEuroSign, FaTags, FaTimes } from 'react-icons/fa';
 import api from '../../services/api';
-import  { objectToFormData } from '/src/services/api'
+import  { objectToFormData } from '../../services/api.js'
 import '../../styles/Admin.css';
 
 const Medicaments = () => {
@@ -68,7 +68,6 @@ const Medicaments = () => {
         }
       }
       else {
-        console.log({formData})
         const data = objectToFormData(formData)
         await api.createMedicament(data);
       }

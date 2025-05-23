@@ -1,12 +1,22 @@
+
 const API_URL = 'http://localhost:5000/api';
 
-const getHeaders = () => {
+
+const getHeaders = (jsonContentAuthorized = true) => {
   const token = localStorage.getItem('token');
+
+  if(jsonContentAuthorized){
+    return    { 
+      'Content-Type': 'application/json', 
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})}
+  }
+
   return {
-    'Content-Type': 'application/json',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
   };
 };
+
+
 
 const handleResponse = async (response) => {
   if (!response.ok) {
@@ -33,14 +43,14 @@ const api = {
     }
   },
 
-  post: async (endpoint, data) => {
+  post: async (endpoint, data, jsonContentAuthorized = true) => {
     try {
       console.log('POST:', `${API_URL}${endpoint}`);
       console.log('Données:', data);
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(data),
+        headers: getHeaders(jsonContentAuthorized),
+        body: (data instanceof FormData ) ? data : JSON.stringify(data),
         credentials: 'include'
       });
       return handleResponse(response);
@@ -152,7 +162,7 @@ const api = {
   createUser: (userData) => api.post('/users', userData),
   updateUser: (userId, userData) => api.put(`/users/${userId}`, userData),
   deleteUser: (userId) => api.delete(`/users/${userId}`),
-  createMedicament: (medicamentData) => api.post('/medicaments', medicamentData),
+  createMedicament: (medicamentData) => api.post('/medicaments', medicamentData, false),
   updateMedicament: (medicamentId, medicamentData) => api.put(`/medicaments/${medicamentId}`, medicamentData),
   deleteMedicament: (medicamentId) => api.delete(`/medicaments/${medicamentId}`),
   updateOrderStatus: (orderId, status) => api.put(`/orders/${orderId}/status`, { status }),

@@ -41,9 +41,10 @@ router.get('/:id', medicamentController.getMedicamentById);
 
 
 // Ajouter un médicament (admin uniquement)
-router.post('/', upload.single('image_file'), auth, async (req, res) => {
+router.post('/',auth, upload.single('image_file'), async (req, res) => {
   try {
     let sqlParams;
+    console.log("----Yara")
     const file = req.file;
     const { name, description, price, stock, image_url, category } = req.body;
 

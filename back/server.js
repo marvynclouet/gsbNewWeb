@@ -113,22 +113,9 @@ app.options('*', cors({
   optionsSuccessStatus: 204
 }));
 
-app.use(express.json({ limit: '10kb' })); // Limite la taille du body à 10kb
 
-// Log all requests
-app.use((req, res, next) => {
-  console.log(`\n=== Nouvelle requête ===`);
-  console.log(`Date: ${new Date().toISOString()}`);
-  console.log(`Méthode: ${req.method}`);
-  console.log(`URL: ${req.url}`);
-  console.log(`IP: ${req.ip}`);
-  console.log(`Headers:`, req.headers);
-  console.log(`Body:`, req.body);
-  console.log(`Origin: ${req.headers.origin}`);
-  console.log(`Referer: ${req.headers.referer}`);
-  console.log(`User-Agent: ${req.headers['user-agent']}`);
-  next();
-});
+app.use(express.urlencoded({ extended: true }));
+
 
 // Routes
 app.use('/api/auth', authRoutes);
