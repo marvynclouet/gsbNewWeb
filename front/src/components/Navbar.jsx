@@ -7,15 +7,11 @@ import '../styles/Navbar.css';
 import logo from '../assets/1 (1).png';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { cart } = useCart();
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleLogout = async () => {
     try {
@@ -33,20 +29,24 @@ const Navbar = () => {
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar${menuOpen ? ' active' : ''}`}>
       <div className="navbar-brand">
         <Link to="/">
           <img src={logo} alt="GSB Pharmacy" className="navbar-logo" />
         </Link>
       </div>
 
-      <button className="menu-toggle" onClick={toggleMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
+      <button
+        className="menu-toggle"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Ouvrir le menu"
+      >
+        <span className="burger-bar"></span>
+        <span className="burger-bar"></span>
+        <span className="burger-bar"></span>
       </button>
 
-      <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
+      <ul className={`nav-links${menuOpen ? ' open' : ''}`}>
         <li>
           <Link to="/" className={isActive('/') ? 'active' : ''}>
             <FaHome /> Accueil
