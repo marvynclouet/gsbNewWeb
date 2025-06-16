@@ -9,7 +9,7 @@ router.get('/stats', async (req, res) => {
     console.log('userId reçu pour stats:', userId, '| Type:', typeof userId);
 
     // Nombre total de médicaments (pour tout le monde)
-    const [medicaments] = await db.query('SELECT COUNT(*) AS count FROM medicaments');
+    const [medicaments] = await db.query('SELECT COUNT(*) AS count FROM medicaments WHERE is_deleted = FALSE OR is_deleted IS NULL');
     console.log('Résultat SQL medicaments:', medicaments);
 
     let commandes = 0;

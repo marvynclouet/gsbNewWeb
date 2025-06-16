@@ -271,4 +271,39 @@
 
 .search-results {
   display: none;
-} 
+}
+
+/* === RESPONSIVE MEDICAMENTS === */
+@media (max-width: 1024px) {
+  .medicaments-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+  .medicaments-list {
+    min-width: 600px;
+    font-size: 0.95rem;
+  }
+}
+@media (max-width: 768px) {
+  .medicaments-container {
+    padding: 0.5rem;
+    max-width: 100%;
+  }
+  .medicaments-list, .list-header {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  .medicament-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  .medicament-image, .item-image {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  .commander-btn {
+    width: 100% !important;
+    font-size: 1rem !important;
+  }
+}
+/* === FIN RESPONSIVE MEDICAMENTS === */ 

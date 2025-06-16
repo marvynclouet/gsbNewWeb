@@ -735,3 +735,29 @@
   border-radius: 0 0 20px 20px !important;
   margin-top: 0;
 }
+
+/* === RESPONSIVE HOME === */
+@media (max-width: 1024px) {
+  .home-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .home-container {
+    padding: 0.5rem;
+    max-width: 100%;
+  }
+  .dashboard-grid, .featured-medications, .quick-actions {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+  .medications-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  .medication-card {
+    width: 100% !important;
+  }
+}
+/* === FIN RESPONSIVE HOME === */

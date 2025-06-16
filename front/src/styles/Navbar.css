@@ -106,34 +106,13 @@
 
 @media (max-width: 768px) {
   .navbar {
-    transform: translateX(-100%);
-    width: 100%;
-    max-width: 300px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.5rem 1rem !important;
   }
-
-  .navbar.open {
-    transform: translateX(0);
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .main-content {
-    margin-left: 0;
-    padding: 1rem;
-  }
-
   .nav-links {
-    padding: 1rem 0;
-  }
-
-  .nav-links li {
-    margin-bottom: 0.5rem;
-  }
-
-  .nav-links a {
-    padding: 0.6rem 1rem;
+    flex-direction: column !important;
+    width: 100%;
   }
 }
 
@@ -250,4 +229,18 @@
   color: #333;
   text-decoration: none;
   transition: color 0.3s;
-} 
+}
+
+/* === RESPONSIVE NAVBAR === */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.5rem 1rem !important;
+  }
+  .nav-links {
+    flex-direction: column !important;
+    width: 100%;
+  }
+}
+/* === FIN RESPONSIVE NAVBAR === */ 

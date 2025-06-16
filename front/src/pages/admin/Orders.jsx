@@ -65,23 +65,6 @@ const Orders = () => {
     }
   };
 
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'En attente';
-      case 'processing':
-        return 'En traitement';
-      case 'shipped':
-        return 'Expédiée';
-      case 'delivered':
-        return 'Livrée';
-      case 'cancelled':
-        return 'Annulée';
-      default:
-        return status;
-    }
-  };
-
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const response = await fetch(`http://localhost:5001/api/orders/${orderId}/status`, {
@@ -123,7 +106,7 @@ const Orders = () => {
   const handleDelete = async (orderId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+        const response = await fetch(`http://localhost:5001/api/orders/${orderId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -157,7 +140,7 @@ const Orders = () => {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${editedOrder.id}`, {
+      const response = await fetch(`http://localhost:5001/api/orders/${editedOrder.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -276,11 +259,7 @@ const Orders = () => {
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => {
-                      setEditMode(false);
-                      setSelectedOrder(order);
-                      setShowModal(true);
-                    }}
+                    onClick={() => navigate(`/orders/${order.id}`)}
                     className="view-button"
                     title="Voir les détails"
                   >
@@ -305,108 +284,109 @@ const Orders = () => {
           <div className="modal">
             <h2>{editMode ? 'Modifier la commande' : 'Détails de la commande'} #{editMode ? editedOrder.id : selectedOrder.id}</h2>
             
-            <div className="order-details">
-              <h3>Informations client</h3>
-              {editMode ? (
-                <>
-                  <div className="form-group">
-                    <label>Nom de livraison:</label>
-                    <input
-                      type="text"
-                      name="delivery_name"
-                      value={editedOrder.delivery_name}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Adresse de livraison:</label>
-                    <textarea
-                      name="delivery_address"
-                      value={editedOrder.delivery_address}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Instructions de livraison:</label>
-                    <textarea
-                      name="delivery_message"
-                      value={editedOrder.delivery_message || ''}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p><strong>Nom:</strong> {selectedOrder.user_name}</p>
-                  <p><strong>Email:</strong> {selectedOrder.user_email}</p>
-                  <p><strong>Adresse de livraison:</strong> {selectedOrder.delivery_address}</p>
-                  <p><strong>Instructions de livraison:</strong> {selectedOrder.delivery_message || 'Aucune'}</p>
-                </>
-              )}
-
-              <h3>Articles commandés</h3>
-              <table className="items-table">
-                <thead>
-                  <tr>
-                    <th>Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(editMode ? editedOrder.items : selectedOrder.items).map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.name}</td>
-                      <td>
-                        {editMode ? (
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                          />
-                        ) : (
-                          item.quantity
-                        )}
-                      </td>
-                      <td>
-                        {editMode ? (
-                          <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={item.price}
-                            onChange={(e) => handleItemChange(index, 'price', e.target.value)}
-                          />
-                        ) : (
-                          `${item.price}€`
-                        )}
-                      </td>
-                      <td>{(item.price * item.quantity).toFixed(2)}€</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td colSpan="3"><strong>Total</strong></td>
-                    <td>
-                      <strong>
-                        {editMode ? 
-                          editedOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) :
-                          calculateTotal(selectedOrder.items)
-                        }€
-                      </strong>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
+            <div className="order-modal-content">
+              <div className="order-modal-section">
+                <h3>Informations client</h3>
+                <div className="form-group">
+                  <label>Nom de livraison :</label>
+                  <input
+                    type="text"
+                    name="delivery_name"
+                    value={editedOrder.delivery_name || selectedOrder.delivery_name}
+                    onChange={handleInputChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Adresse de livraison :</label>
+                  <textarea
+                    name="delivery_address"
+                    value={editedOrder.delivery_address || selectedOrder.delivery_address}
+                    onChange={handleInputChange}
+                    className="form-control"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <div className="form-group">
+                  <label>Instructions de livraison :</label>
+                  <textarea
+                    name="delivery_message"
+                    value={editedOrder.delivery_message || selectedOrder.delivery_message}
+                    onChange={handleInputChange}
+                    className="form-control"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+              <div className="order-modal-section articles">
+                <h3>Articles commandés</h3>
+                <div className="order-modal-articles">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(editMode ? editedOrder.items : selectedOrder.items).map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>
+                            {editMode ? (
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                                className="form-control"
+                              />
+                            ) : (
+                              item.quantity
+                            )}
+                          </td>
+                          <td>
+                            {editMode ? (
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={item.price}
+                                onChange={(e) => handleItemChange(index, 'price', e.target.value)}
+                                className="form-control"
+                              />
+                            ) : (
+                              `${item.price}€`
+                            )}
+                          </td>
+                          <td>{(item.price * item.quantity).toFixed(2)}€</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="3"><strong>Total</strong></td>
+                        <td>
+                          <strong>
+                            {editMode ? 
+                              editedOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) :
+                              calculateTotal(selectedOrder.items)
+                            }€
+                          </strong>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
             </div>
 
             <div className="modal-buttons">
               {editMode ? (
                 <>
-                  <button className="save-button" onClick={handleSaveEdit}>
+                  <button className="submit-button" onClick={handleSaveEdit}>
                     Enregistrer
                   </button>
                   <button 

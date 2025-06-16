@@ -157,7 +157,7 @@ const Medicaments = () => {
                         try {
                           const price = typeof medicament.price === 'number' ? medicament.price : Number(medicament.price);
                           return isNaN(price) ? '0.00' : price.toFixed(2);
-                        } catch (e) {
+                        } catch {
                           return '0.00';
                         }
                       })()

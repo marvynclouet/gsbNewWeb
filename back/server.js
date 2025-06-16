@@ -223,11 +223,8 @@ Object.entries(require('os').networkInterfaces()).forEach(([name, interfaces]) =
 
 app.listen(PORT, HOST, () => {
   console.log(`\n=== Serveur démarré ===`);
-  console.log(`Serveur démarré sur ${HOST}:${PORT}`);
-  console.log('Access the server at:');
   console.log(`- http://localhost:${PORT}`);
-  console.log(`- http://127.0.0.1:${PORT}`);
-  console.log(`- http://10.74.1.3:${PORT}`);
+ 
   
   // Test local immédiat
   const http = require('http');

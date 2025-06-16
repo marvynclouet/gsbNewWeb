@@ -80,11 +80,6 @@ const Login = () => {
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? 'Connexion en cours...' : 'Se connecter'}
           </button>
-
-          <div className="auth-links">
-            <Link to="/register">Créer un compte</Link>
-            <Link to="/forgot-password">Mot de passe oublié ?</Link>
-          </div>
         </form>
       </div>
     </div>

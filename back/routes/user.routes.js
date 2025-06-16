@@ -22,7 +22,7 @@ router.use(adminMiddleware);
 router.get('/', async (req, res) => {
   try {
     const [users] = await db.query(
-      'SELECT id, name, siret, email, role, phone, address, city, postal_code, created_at, updated_at FROM users'
+      'SELECT id, name, siret, email, role, phone, address, city, postal_code, created_at, updated_at FROM users WHERE is_deleted = FALSE OR is_deleted IS NULL'
     );
     res.json(users);
   } catch (error) {
@@ -111,9 +111,10 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    await db.query('DELETE FROM users WHERE id = ?', [userId]);
+    // Suppression logique : on met à jour le champ is_deleted
+    await db.query('UPDATE users SET is_deleted = TRUE WHERE id = ?', [userId]);
 
-    res.json({ message: 'Utilisateur supprimé avec succès' });
+    res.json({ message: 'Utilisateur masqué (suppression logique) avec succès' });
   } catch (error) {
     console.error('Erreur lors de la suppression de l\'utilisateur:', error);
     res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur' });
