@@ -1,0 +1,11 @@
+{
+  "name": "gsb-pharmacy-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run dev --prefix front\" \"npm run dev --prefix back\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
