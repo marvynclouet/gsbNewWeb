@@ -5,15 +5,13 @@ const db = require('../config/db.config');
 
 exports.createOrder = async (req, res) => {
     try {
-      console.log('reqres', req, res)
       const { items, total, message, userId } = req.body;
-      if(!items || !total || !message || !userId ){
+
+      if(!items || !total  || !userId ){
         console.log("[POST: createOrder] Some body properties are missing", items ,total ,message ,userId)
         return res.status(500).json({ message: " Some props are missing " })
       }
       
-      console.log("Ok")
-
       // Retrieve user information
       const [users] = await db.query(
         'SELECT name, address FROM users WHERE id = ?',
@@ -30,7 +28,7 @@ exports.createOrder = async (req, res) => {
       const [orderResult] = await db.query(
         `INSERT INTO orders (user_id, total, status, delivery_name, delivery_address, delivery_message)
          VALUES (?, ?, 'pending', ?, ?, ?)`,
-        [userId, total, user.name, user.address, message]
+        [userId, total, user.name, user.address, message ?? ""]
       );
 
       const orderId = orderResult.insertId;

@@ -1,8 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const fs = require('fs');
-const path = require('path')
+
 
 const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
@@ -27,7 +26,7 @@ app.use('/api/users', userRoutes);
 
 app.use('/api/uploads', fileProviderRouter)
 
-app.post('/api/mock', mockController.generateHash)
+app.post('/api/test/generate/hash', mockController.generateHash)
 
 // Route de test
 app.get('/api/test', (req, res) => {

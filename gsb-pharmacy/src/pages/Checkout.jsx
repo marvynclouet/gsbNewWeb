@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -41,11 +41,13 @@ const Checkout = () => {
         message: formData.message
       };
 
-      console.log(orderData, 'order content')
-      const response = await api.createOrder(orderData);
+
+      const response = await api.createOrder(JSON.stringify(orderData), { 'Content-Type':'application/json' });
       clearCart();
+      
       navigate(`/orders/${response.id}`);
-    } catch (err) {
+    }
+     catch (err) {
       setError(err.message || 'Une erreur est survenue lors de la création de la commande');
     }
     finally {
@@ -54,11 +56,6 @@ const Checkout = () => {
   };
 
 
-  useEffect(()=>{
-    if(user){
-      console.log({ user })
-    }
-  },[user])
 
   if (!cart || cart.length === 0) {
     return (
@@ -122,7 +119,7 @@ const Checkout = () => {
               disabled
               type="text"
               id="name"
-              value={user?.name || ''}
+              value={ user?.name || ''}
             />
           </div>
 

@@ -91,6 +91,7 @@ exports.updateOneMediacament = async (req, res) => {
     const file = req.file;
     let exsitingMedicament;
     const { id } = req.params;
+    
     const { name, description, price, stock, image_url, category } = req.body ;
 
     const response = await db.query(
@@ -164,7 +165,7 @@ exports.deleteOneMedicament = async (req, res) => {
 
     console.log(exsitingMedicament)
 
-    if(!exsitingMedicament[0].image_url.toString().includes('http')){
+    if(exsitingMedicament && !exsitingMedicament[0].image_url.toString().includes('http')){
       const filePath = path.join(__dirname, `../uploads/medicaments/${exsitingMedicament[0].image_url}`)
       console.log({filePath})
       fs.unlink(filePath, async (err)=>{

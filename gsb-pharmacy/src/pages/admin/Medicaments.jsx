@@ -32,14 +32,6 @@ const Medicaments = () => {
     fetchMedicaments();
   }, []);
 
-  useEffect(()=>{
-    if (medicaments.length > 0) {
-      console.log({ medicaments })
-      console.log("image_url? :  ", medicaments[0].image_url )
-      console.log("http? : ", medicaments[0].image_url.includes('http'))
-    }
-  },[medicaments])
-
 
   const fetchMedicaments = async () => {
     try {
@@ -67,6 +59,12 @@ const Medicaments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      if( formData.image_url && !/\.(jpg|jpeg|png)$/i.test(formData.image_url) ){
+        window.alert("Le format du chanmp  \"image url\" rempli n'est acceptable/correct")
+        return
+      }
+
       if (editingMedicament) {
         const data = objectToFormData(formData)
         if( editingMedicament.id && data ){
@@ -121,7 +119,8 @@ const Medicaments = () => {
       try {
         await api.deleteMedicament(id);
         fetchMedicaments();
-      } catch (err) {
+      } 
+      catch (err) {
         setError('Erreur lors de la suppression du médicament');
         console.error('Erreur:', err);
       }
@@ -318,7 +317,7 @@ const Medicaments = () => {
                     disabled={ !!importedImageName }
                     onChange={ handleInputChange }
                     style={{ backgroundColor: importedImageName && '#f2d7d5', color: 'white ! important'}}
-                    placeholder={ importedImageName ? "Lock" : "https://.../nom-du-medicament.jpg" }
+                    placeholder={ importedImageName ? "Lock" : "https/website/.../..(jpeg|jpg|png)" }
                   />
               </div>
 

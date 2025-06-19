@@ -1,5 +1,8 @@
-import React from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { 
+  Routes,
+  Route,
+} from 'react-router-dom'
+
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -10,23 +13,22 @@ import Checkout from './pages/Checkout'
 import Orders from './pages/Orders'
 import OrderDetails from './pages/OrderDetails'
 import AdminLogin from './pages/AdminLogin'
-import Dashboard from './pages/admin/Dashboard'
 import CreateAdmin from './pages/admin/CreateAdmin'
-import MedicamentsAdmin from './pages/admin/Medicaments'
-import Users from './pages/admin/Users'
-import OrdersAdmin from './pages/admin/Orders'
-import Stats from './pages/admin/Stats'
 import Profile from './pages/Profile'
 import Contact from './pages/Contact'
-import { useAuth } from './contexts/AuthContext'
-import { CartProvider } from './context/CartContext'
-import { AuthProvider } from './context/AuthContext'
+
+
+import { CartProvider } from './contexts/CartContext'
+import { AuthProvider } from './contexts/AuthContext'
+
 import './styles/App.css'
+
 import PrivateRoute from './components/PrivateRoute'
 import AdminRoute from './components/AdminRoute'
 import AdminRoutes from './routes/AdminRoutes'
 import Notification from './components/Notification'
 import { useCart } from './contexts/CartContext'
+
 
 const App = () => {
   return (
@@ -41,17 +43,13 @@ const App = () => {
 }
 
 const AppContent = () => {
-  const { user } = useAuth()
-  const location = useLocation()
+
   const { notification } = useCart()
-  
-  const noNavbarRoutes = ['/login', '/register', '/admin/login', '/admin/create']
-  const shouldShowNavbar = user && !noNavbarRoutes.includes(location.pathname)
 
   return (
-    <>
-      {shouldShowNavbar && <Navbar />}
-      <main className={shouldShowNavbar ? "main-content" : "full-content"}>
+    <div>
+      <Navbar />
+      <main className={ "main-content" /*shouldShowNavbar ? "main-content" : "full-content"*/}>
         <Notification message={notification} />
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -73,7 +71,7 @@ const AppContent = () => {
           </Route>
         </Routes>
       </main>
-    </>
+    </div>
   )
 }
 

@@ -68,11 +68,11 @@ const Orders = () => {
               </div>
               <div className="order-status">
                 <span className={`status ${order.status.toLowerCase()}`}>
-                  {order.status === 'pending' && 'En attente'}
-                  {order.status === 'processing' && 'En cours de traitement'}
-                  {order.status === 'shipped' && 'Expédiée'}
-                  {order.status === 'delivered' && 'Livrée'}
-                  {order.status === 'cancelled' && 'Annulée'}
+                  { order.status === 'pending'    && 'En attente' }
+                  { order.status === 'processing' && 'En cours de traitement' }
+                  { order.status === 'shipped'    && 'Expédiée' }
+                  { order.status === 'delivered'  && 'Livrée' }
+                  { order.status === 'cancelled'  && 'Annulée' }
                 </span>
               </div>
             </div>

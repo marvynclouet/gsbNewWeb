@@ -66,6 +66,7 @@ export const medicaments = [
 ];
 
 // Mapping des images pour les médicaments
+
 export const medicamentImages = {
   'Paracétamol': '/images/paracetamol.jpg',
   'Ibuprofène': '/images/ibuprofene.jpg',

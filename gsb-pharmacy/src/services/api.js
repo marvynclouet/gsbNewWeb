@@ -1,9 +1,9 @@
 const API_URL = 'http://localhost:5000/api';
 
-const getHeaders = () => {
+const getHeaders = (headers) => {
   const token = localStorage.getItem('token');
   return {
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    ...(token ? { 'Authorization': `Bearer ${token}`, ...(headers ?? {}) } : {})
   };
 };
 
@@ -31,17 +31,15 @@ const api = {
     return response.json();
   },
 
-  post: async (endpoint, data) => {
+  post: async (endpoint, data, headers) => {
 
-    console.log(data, 'requete tres moche')
     try {
       console.log('Envoi de la requête à:', `${API_URL}${endpoint}`);
-      const donnee =  { ...data }
-      console.log(donnee, 'test')
+      console.log("data", data)
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         body: data,
-        headers: getHeaders()
+        headers: getHeaders(headers)
       });
 
       if (!response.ok) {
@@ -51,7 +49,8 @@ const api = {
       }
 
       return response.json();
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Erreur lors de la requête:', error);
       throw error;
     }
@@ -97,7 +96,7 @@ const api = {
   getOrders: () => api.get('/orders'),
   getUserOrders: () => api.get('/orders'),
   getOrder: (id) => api.get(`/orders/${id}`),
-  createOrder: (orderData) => api.post('/orders', orderData),
+  createOrder: (orderData, headers = {}) => api.post('/orders', orderData, headers),
 
   // Cart
 

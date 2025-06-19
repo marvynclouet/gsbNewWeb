@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPills, FaClipboardList, FaShoppingCart, FaChartLine, FaSearch, FaExclamationTriangle, FaCalendarAlt } from 'react-icons/fa';
 import '../styles/Home.css';
 
 const Home = () => {
   const navigate = useNavigate();
+  const token = useRef(localStorage.getItem('token'))
   const [searchQuery, setSearchQuery] = useState('');
 
   const featuredMedications = [
@@ -80,8 +81,8 @@ const Home = () => {
                     <h3>{med.name}</h3>
                     <p className="description">{med.description}</p>
                     <p className="price">{med.price}</p>
-                    <span className={`stock-badge ${med.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                      {med.stock > 0 ? 'En stock' : 'Rupture de stock'}
+                    <span className={ `stock-badge ${med.stock > 0 ? 'in-stock' : 'out-of-stock' }`}>
+                      { med.stock > 0 ? 'En stock' : 'Rupture de stock' }
                     </span>
                   </div>
                 </div>
@@ -125,15 +126,15 @@ const Home = () => {
         <section className="quick-actions">
           <h2>Actions Rapides</h2>
           <div className="actions-grid">
-            <button onClick={() => navigate('/medicaments')} className="action-button primary">
+            <button onClick={() => token.current ? navigate('/medicaments') : navigate("/login")} className="action-button primary">
               <FaShoppingCart className="button-icon" />
               Nouvelle Commande
             </button>
-            <button onClick={() => navigate('/orders')} className="action-button secondary">
+            <button onClick={() => token.current ? navigate('/orders') : navigate("/login") } className="action-button secondary">
               <FaClipboardList className="button-icon" />
               Voir les Commandes
             </button>
-            <button onClick={() => navigate('/medicaments')} className="action-button tertiary">
+            <button onClick={() => token.current ? navigate('/medicaments') : navigate("/login") } className="action-button tertiary">
               <FaPills className="button-icon" />
               Gérer l'Inventaire
             </button>

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaPills, FaEnvelope, FaShoppingCart, FaUser, FaListAlt, FaSignOutAlt } from 'react-icons/fa';
+
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+
 import '../styles/Navbar.css';
+
 import logo from '../assets/1 (1).png';
+
 
 const Navbar = () => {
 
@@ -103,11 +107,11 @@ const Navbar = () => {
                 <FaUser /> Connexion
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/register" className={isActive('/register') ? 'active' : ''}>
                 Inscription
               </Link>
-            </li>
+            </li> */}
           </>
         )}
       </ul>

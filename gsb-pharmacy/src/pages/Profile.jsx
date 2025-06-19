@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import api from '../services/api';
 import '../styles/Profile.css';
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
+  
   const [formData, setFormData] = useState({
     name: '',
     siret: '',
@@ -14,6 +14,7 @@ const Profile = () => {
     city: '',
     postal_code: ''
   });
+  
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
